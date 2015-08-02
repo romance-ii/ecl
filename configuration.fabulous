@@ -11,5 +11,5 @@ cd "$DIR"
 ./configure --prefix=$(pwd)/../Binaries --exec-prefix=$(pwd)/../Binaries/$(uname) \
             --enable-shared --disable-rpath --with-bytecmp --with-rt \
             --with-profile --with-dffi --with-fpe --with-sse=yes \
-            --with-newcmp --with-unicode-names --with-x=no
+            --with-newcmp=no --with-unicode-names --with-x=no
 
