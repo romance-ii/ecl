@@ -1,0 +1,61 @@
+#!/bin/bash
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+cd "$DIR"
+
+export LD_LIBRARY_PATH=$(pwd)/../Binaries/Linux/lib:$ldlib
+export host=arm-linux-androideabi
+export target=arm-linux-androideabi
+export arch=arm
+export toolchain_arch=arm-linux-androideabi
+export toolchain_path="$NDKROOT/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin"
+export android_target=android-15
+export sysroot="$NDKROOT/platforms/$android_target/arch-$arch"
+export ANDROID_TOOLCHAIN=$toolchain_path
+export OBJCOPY=${ANDROID_TOOLCHAIN}/$toolchain_arch-objcopy
+export STRIP=${ANDROID_TOOLCHAIN}/$toolchain_arch-strip
+export AR=${ANDROID_TOOLCHAIN}/$toolchain_arch-ar
+export RANLIB=${ANDROID_TOOLCHAIN}/$toolchain_arch-ranlib
+export AS=${ANDROID_TOOLCHAIN}/$toolchain_arch-as
+export CC=${ANDROID_TOOLCHAIN}/$toolchain_arch-gcc
+export CXX=${ANDROID_TOOLCHAIN}/$toolchain_arch-g++
+export CPP=${ANDROID_TOOLCHAIN}/$toolchain_arch-cpp
+export NM=${ANDROID_TOOLCHAIN}/$toolchain_arch-nm
+export GPROF=${ANDROID_TOOLCHAIN}/$toolchain_arch-gprof
+export READEFLF=${ANDROID_TOOLCHAIN}/$toolchain_arch-readelf
+export OBJDUMP=${ANDROID_TOOLCHAIN}/$toolchain_arch-objdump
+export CFLAGS="-I../Binaries/include"
+export LIBS="-L../Binaries/Android/lib -lgc -latomic_ops"
+export CPPFLAGS="--sysroot=${sysroot}"
+export LDFLAGS="--sysroot=${sysroot}"
+export cross_compiling=true
+export PATH=$(pwd)/../Binaries/Linux/bin:$toolchain_path:$PATH
+export ARCHITECTURE=$arch
+
+mkdir -p build.android
+cd build.android
+
+../src/configure \
+    --host=$host \
+    --target=$host \
+    --build=$(uname -m)-$(uname)-gnu \
+    --disable-rpath \
+    --enable-shared \
+    --exec-prefix=$(pwd)/../../Binaries/Android \
+    --prefix=$(pwd)/../../Binaries \
+    --srcdir="$(pwd)/../src" \
+    --with-bytecmp \
+    --with-dffi=no \
+    --with-fpe \
+    --with-newcmp=no \
+    --with-profile \
+    --with-rt \
+    --with-unicode-names \
+    --with-x=no \
+    --with-cross-config=../fabulous.android.cross.config
+
