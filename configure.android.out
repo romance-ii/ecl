@@ -1,0 +1,4 @@
+checking build system type... x86_64-Linux-gnu
+checking host system type... arm-unknown-linux-androideabi
+checking for arm-linux-androideabi-gcc... /toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-gcc
+checking whether the C compiler works... no
